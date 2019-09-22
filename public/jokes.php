@@ -6,18 +6,20 @@
         include_once __DIR__ . '/../includes/DatabaseFunctions.php';
 
        
-        $sql = 'SELECT joke.id,
-                        joke.joketext,
-                        author.name,
-                        author.email
-                        FROM ijdb.joke 
-                        INNER JOIN ijdb.author
-                        ON joke.authorid = author.id';
-        $result = $pdo->query($sql);
+        // $sql = 'SELECT joke.id,
+        //                 joke.joketext,
+        //                 author.name,
+        //                 author.email
+        //                 FROM ijdb.joke 
+        //                 INNER JOIN ijdb.author
+        //                 ON joke.authorid = author.id';
+        // $result = $pdo->query($sql);
 
         $title = 'Joke list';
 
         $totalJokes = totalJokes($pdo);
+
+        $jokes = allJokes($pdo);
 
         // start the bufffer
         ob_start();

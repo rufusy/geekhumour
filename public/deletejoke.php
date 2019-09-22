@@ -1,13 +1,10 @@
 <?php 
-   
     try 
     {
         include_once  __DIR__ . '/../includes/DatabaseConnection.php';
+        include_once  __DIR__ . '/../includes/DatabaseFunctions.php';
 
-        $sql = 'DELETE FROM ijdb.joke WHERE id = :id';
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindvalue(':id', $_POST['id']);
-        $stmt->execute(); 
+        deleteJoke($pdo, $_POST['id']);
 
         header('location:jokes.php');
     }
