@@ -1,4 +1,7 @@
 <?php 
+    ini_set("display_errors", "1");
+    error_reporting(E_ALL);
+
     if (isset($_POST['joketext']))
     {
         try 
@@ -7,8 +10,11 @@
             
             include_once __DIR__ . '/../includes/DatabaseFunctions.php';
 
-
-            insertJoke($pdo, $_POST['joketext'], 1);
+            insertJoke($pdo, [
+                'authorid' => 1,
+                'joketext' => $_POST['joketext'], 
+                'jokedate' => new DateTime()
+            ]);
 
             header('location:jokes.php');
         }

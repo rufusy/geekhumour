@@ -10,10 +10,13 @@
     {
         if(isset($_POST['joketext']))
         {
-            updateJoke($pdo, $_POST['jokeid'], $_POST['joketext'], 1);
+            updateJoke($pdo, [
+                'id' => $_POST['jokeid'], 
+                'joketext' => $_POST['joketext'], 
+                'jokedate' => new DateTime()
+            ]);
 
             header('location: jokes.php');
-
         }
         else
         {

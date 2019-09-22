@@ -1,5 +1,17 @@
 <?php
 
+    function processDates($fields)
+    {   
+        foreach($fields as $key => $value)
+        {
+            if($value instanceof DateTime)
+            {
+                $fields[$key] = $value->format('Y-m-d');
+            }
+        }
+        return $fields;
+    }
+
     function query($pdo, $sql, $params = [])
     {
         $query = $pdo->prepare($sql);
@@ -16,7 +28,7 @@
         return $row[0];
     }
 
-    
+
     function getJoke($pdo, $id)
     {
         $params = [':id' => $id];
@@ -30,36 +42,63 @@
     }
 
 
-    function insertJoke($pdo, $joketext, $authorid)
+    function insertJoke($pdo, $fields)
     {
-        $sql = 'INSERT INTO ijdb.joke SET
-                joketext = :joketext,
-                jokedate = CURDATE(),
-                authorid = :authorid';
-        
-        $params = [
-            ':joketext' => $joketext,
-            ':authorid' => $authorid
-        ];
+        // $sql = 'INSERT INTO joke (joketext, jokedate, authorid)
+        //             VALUES (:joketext, CURDATE(), :authorid)';
 
-        query($pdo, $sql, $params);
+        $sql = 'INSERT INTO ijdb.joke (';
+        foreach($fields as $key => $value)
+        {
+            $sql .= $key.',' ;
+        }
+        $sql = rtrim($sql, ',');
+        $sql .= ') VALUES (';
+        foreach ($fields as $key => $value)
+        {
+            $sql .= ':' .$key. ',';
+        }
+        $sql = rtrim($sql, ',');
+        $sql .= ')';
+
+        $fields = processDates($fields);
+
+        query($pdo, $sql, $fields);
     }
 
-    function updateJoke($pdo, $jokeid, $joketext, $authorid)
-    {
-        $sql = 'UPDATE ijdb.joke SET 
-                authorid = :authorid,
-                joketext = :joketext
-                WHERE 
-                id = :id';
+    function updateJoke($pdo, $fields)
+    {  
+        /* Skeleton update query  */
+        // $sql = 'UPDATE ijdb.joke SET 
+        //         id = :id,
+        //         authorid = :authorid,
+        //         joketext = :joketext
+        //         WHERE 
+        //         id = :id';
+        /* */
+        // $fields = [
+        //     'id' => $_POST['jokeid'], 
+        //     'joketext' => $_POST['joketext'], 
+        //     'authorid' => 1
+        // ];
 
-        $params = [
-            ':joketext' => $joketext,
-            ':authorid' => $authorid,
-            ':id' => $jokeid
-        ];
+        $sql = 'UPDATE ijdb.joke SET';
 
-        query($pdo, $sql, $params);
+        foreach($fields as $key => $value)
+        {
+            $sql .= ' '.$key.'= :'.$key.',' ;
+        }
+    
+        $sql = rtrim($sql, ',');
+
+        // set the primary key variable
+        $fields['primaryKey'] = $fields['id'];
+
+        $sql .= ' WHERE id = :primaryKey';
+
+        $fields = processDates($fields);
+
+        query($pdo, $sql, $fields);
     }
 
     function deleteJoke($pdo, $id)
@@ -79,6 +118,7 @@
     {
         $sql = 'SELECT joke.id, 
                         joke.joketext,
+                        joke.jokedate,
                         author.email,
                         author.name
                         FROM ijdb.joke 
