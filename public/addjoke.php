@@ -10,12 +10,11 @@
             
             include_once __DIR__ . '/../includes/DatabaseFunctions.php';
 
-            insertJoke($pdo, [
+            insertJoke($pdo, 'ijdb', 'joke',[
                 'authorid' => 1,
                 'joketext' => $_POST['joketext'], 
                 'jokedate' => new DateTime()
             ]);
-
             header('location:jokes.php');
         }
         catch (PDOException $e)

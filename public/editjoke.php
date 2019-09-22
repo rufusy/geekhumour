@@ -10,7 +10,7 @@
     {
         if(isset($_POST['joketext']))
         {
-            updateJoke($pdo, [
+            updateJoke($pdo, 'ijdb', 'joke', 'id', [
                 'id' => $_POST['jokeid'], 
                 'joketext' => $_POST['joketext'], 
                 'jokedate' => new DateTime()
@@ -20,7 +20,7 @@
         }
         else
         {
-            $joke = getJoke($pdo, $_GET['id']);
+            $joke = findById($pdo, 'ijdb', 'joke', 'id', $_GET['id']);
 
             $title = 'Edit joke';
 

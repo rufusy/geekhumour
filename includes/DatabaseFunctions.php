@@ -12,6 +12,7 @@
         return $fields;
     }
 
+    
     function query($pdo, $sql, $params = [])
     {
         $query = $pdo->prepare($sql);
@@ -20,34 +21,38 @@
     }
 
 
-    function totalJokes($pdo)
+    function findAll($pdo, $databaseName, $databaseTable)
     {
-        $sql = $sql = 'SELECT COUNT(*) FROM ijdb.joke';
-        $query = query($pdo, $sql);
-        $row = $query->fetch();
-        return $row[0];
+        $catalogName = $databaseName.'.'.$databaseTable;
+
+        $sql = 'SELECT * FROM '.$catalogName;
+        $result = query($pdo, $sql);
+        return $result->fetchAll();
     }
 
 
-    function getJoke($pdo, $id)
-    {
-        $params = [':id' => $id];
+    function findById($pdo, $databaseName, $databaseTable, $primaryKey, $id)
+    {   
+        $catalogName = $databaseName.'.'.$databaseTable;
 
-        $sql = 'SELECT * FROM ijdb.joke 
-                WHERE id = :id';
+        $sql = 'SELECT * FROM '.$catalogName.' WHERE '.$primaryKey.' = :id';
 
-        $query = query($pdo, $sql, $params);
-        return $query->fetch();
-             
+        $params = [
+            'id' => $id
+        ];
+
+        $result = query($pdo, $sql, $params);
+
+        return $result->fetch();
     }
 
 
-    function insertJoke($pdo, $fields)
+    function insertJoke($pdo, $databaseName, $databaseTable, $fields)
     {
-        // $sql = 'INSERT INTO joke (joketext, jokedate, authorid)
-        //             VALUES (:joketext, CURDATE(), :authorid)';
+    
+        $catalogName = $databaseName.'.'.$databaseTable;
 
-        $sql = 'INSERT INTO ijdb.joke (';
+        $sql = 'INSERT INTO '.$catalogName.'(';
         foreach($fields as $key => $value)
         {
             $sql .= $key.',' ;
@@ -65,24 +70,14 @@
 
         query($pdo, $sql, $fields);
     }
+   
 
-    function updateJoke($pdo, $fields)
+    function updateJoke($pdo, $databaseName, $databaseTable, $primaryKey, $fields)
     {  
-        /* Skeleton update query  */
-        // $sql = 'UPDATE ijdb.joke SET 
-        //         id = :id,
-        //         authorid = :authorid,
-        //         joketext = :joketext
-        //         WHERE 
-        //         id = :id';
-        /* */
-        // $fields = [
-        //     'id' => $_POST['jokeid'], 
-        //     'joketext' => $_POST['joketext'], 
-        //     'authorid' => 1
-        // ];
+     
+        $catalogName = $databaseName.'.'.$databaseTable;
 
-        $sql = 'UPDATE ijdb.joke SET';
+        $sql = 'UPDATE '.$catalogName.' SET';
 
         foreach($fields as $key => $value)
         {
@@ -94,19 +89,20 @@
         // set the primary key variable
         $fields['primaryKey'] = $fields['id'];
 
-        $sql .= ' WHERE id = :primaryKey';
+        $sql .= ' WHERE '.$primaryKey.' = :primaryKey';
 
         $fields = processDates($fields);
 
         query($pdo, $sql, $fields);
     }
 
-    function deleteJoke($pdo, $id)
+
+    function delete($pdo, $databaseName, $databaseTable, $primaryKey, $id)
     {
-        $sql = 'DELETE FROM ijdb.joke 
-                WHERE
-                id = :id';
-        
+        $catalogName = $databaseName.'.'.$databaseTable;
+
+        $sql = 'DELETE FROM '.$catalogName.' WHERE '.$primaryKey.' = :id';
+
         $params = [
             ':id' => $id
         ];
@@ -114,18 +110,15 @@
         query($pdo, $sql, $params);
     }
 
-    function allJokes($pdo)
-    {
-        $sql = 'SELECT joke.id, 
-                        joke.joketext,
-                        joke.jokedate,
-                        author.email,
-                        author.name
-                        FROM ijdb.joke 
-                        INNER JOIN ijdb.author
-                        ON joke.authorid = author.id';
-        
-        $result = query($pdo, $sql);
 
-        return $result->fetchAll();
+    function total($pdo, $databaseName, $databaseTable)
+    {
+        $catalogName = $databaseName.'.'.$databaseTable;
+
+        $sql = 'SELECT COUNT(*) FROM '.$catalogName;
+        $query = query($pdo, $sql);
+        $row = $query->fetch();
+        return $row[0];
     }
+
+    

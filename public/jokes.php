@@ -5,31 +5,31 @@
 
         include_once __DIR__ . '/../includes/DatabaseFunctions.php';
 
-       
-        // $sql = 'SELECT joke.id,
-        //                 joke.joketext,
-        //                 author.name,
-        //                 author.email
-        //                 FROM ijdb.joke 
-        //                 INNER JOIN ijdb.author
-        //                 ON joke.authorid = author.id';
-        // $result = $pdo->query($sql);
-
+   
         $title = 'Joke list';
 
-        $totalJokes = totalJokes($pdo);
+        $totalJokes = total($pdo, 'ijdb', 'joke');
 
-        $jokes = allJokes($pdo);
+        $result = findAll($pdo,'ijdb','joke');
 
-        // start the bufffer
+        $jokes = [];
+
+        foreach ($result as $joke)
+        {
+            $author = findById($pdo, 'ijdb', 'author', 'id', $joke['authorid']);
+
+            $jokes[] = [
+                'id' => $joke['id'],
+                'joketext' => $joke['joketext'],
+                'jokedate' => $joke['jokedate'],
+                'name' => $author['name'],
+                'email' => $author['email']
+            ];
+        }
+
         ob_start();
 
-        // Include the template. The PHP code will be executed, but the resulting HTML will be 
-        // put in a buffer then sent to the browser
         include __DIR__ . '/../templates/jokes.html.php';
-
-        // Read the contents of the output buffer and store them in the $output variable for use 
-        // in layout.html.php
 
         $output = ob_get_clean();
 
