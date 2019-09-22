@@ -29,7 +29,7 @@
                 <ul id="nav-mobile" class="left hide-on-med-and-down">
                     <li><a href="index.php">Home</a></li>
                     <li><a href="jokes.php">Jokes List</a></li>
-                    <li><a href="addjoke.php">Add a new joke</a></li>
+                    <li><a href="editjoke.php">Add a new joke</a></li>
                 </ul>
             </div>
         </nav>

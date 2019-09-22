@@ -12,7 +12,7 @@
         return $fields;
     }
 
-    
+
     function query($pdo, $sql, $params = [])
     {
         $query = $pdo->prepare($sql);
@@ -47,7 +47,7 @@
     }
 
 
-    function insertJoke($pdo, $databaseName, $databaseTable, $fields)
+    function insert($pdo, $databaseName, $databaseTable, $fields)
     {
     
         $catalogName = $databaseName.'.'.$databaseTable;
@@ -72,7 +72,7 @@
     }
    
 
-    function updateJoke($pdo, $databaseName, $databaseTable, $primaryKey, $fields)
+    function update($pdo, $databaseName, $databaseTable, $primaryKey, $fields)
     {  
      
         $catalogName = $databaseName.'.'.$databaseTable;
@@ -121,4 +121,20 @@
         return $row[0];
     }
 
+
+    function save($pdo, $databaseName, $databaseTable, $primaryKey, $record)
+    {
+        try 
+        {
+            if ($record[$primaryKey] == '')
+            {
+                $record[$primaryKey] = null;
+            }
+            insert($pdo, $databaseName, $databaseTable, $record);
+        }
+        catch (PDOException $e)
+        {
+            update($pdo, $databaseName, $databaseTable, $primaryKey, $record);
+        }
+    }
     

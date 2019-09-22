@@ -8,19 +8,22 @@
 
     try
     {
-        if(isset($_POST['joketext']))
+        if(isset($_POST['joke']))
         {
-            updateJoke($pdo, 'ijdb', 'joke', 'id', [
-                'id' => $_POST['jokeid'], 
-                'joketext' => $_POST['joketext'], 
-                'jokedate' => new DateTime()
-            ]);
+            $joke = $_POST['joke'];
+            $joke['authorid'] = 1;
+            $joke['jokedate'] = new DateTime();
+
+            save($pdo, 'ijdb', 'joke', 'id',$joke);
 
             header('location: jokes.php');
         }
         else
         {
-            $joke = findById($pdo, 'ijdb', 'joke', 'id', $_GET['id']);
+            if(isset($_GET['id']))
+            {
+                $joke = findById($pdo, 'ijdb', 'joke', 'id', $_GET['id']);
+            }
 
             $title = 'Edit joke';
 
