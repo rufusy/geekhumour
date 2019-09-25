@@ -1,22 +1,29 @@
 <?php
+    ini_set("display_errors", "1");
+    error_reporting(E_ALL);
+
     try 
     {  
         include_once __DIR__ . '/../includes/DatabaseConnection.php';
 
-        include_once __DIR__ . '/../includes/DatabaseFunctions.php';
+        include_once __DIR__ . '/../classes/DatabaseTable.php';
 
    
+        $jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
+    
+        $authorTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
+
         $title = 'Joke list';
 
-        $totalJokes = total($pdo, 'ijdb', 'joke');
+        $totalJokes = $jokesTable->total();
 
-        $result = findAll($pdo,'ijdb','joke');
+        $result = $jokesTable->findAll();
 
         $jokes = [];
 
         foreach ($result as $joke)
         {
-            $author = findById($pdo, 'ijdb', 'author', 'id', $joke['authorid']);
+            $author = $authorTable->findById($joke['authorid']);
 
             $jokes[] = [
                 'id' => $joke['id'],

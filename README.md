@@ -1,2 +1,2 @@
 # geekhumour
-geekhumour
+A microframework in PHP

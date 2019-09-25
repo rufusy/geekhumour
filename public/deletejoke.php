@@ -2,10 +2,12 @@
     try 
     {
         include_once  __DIR__ . '/../includes/DatabaseConnection.php';
-        include_once  __DIR__ . '/../includes/DatabaseFunctions.php';
+        include_once  __DIR__ . '/../classes/DatabaseTable.php';
 
-        //deleteJoke($pdo, $_POST['id']);
-        delete($pdo, 'ijdb', 'joke', 'id', $_POST['id']);
+    
+        $jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
+
+        $jokesTable->delete($_POST['id']);
 
         header('location:jokes.php');
     }
