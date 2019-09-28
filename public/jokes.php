@@ -43,6 +43,8 @@
     }
     catch(PDOException $e)
     {
+        $title = 'An error occured';
+        
         $output = 'Unable to connect to the database server '.
         $e->getMessage() . ' in '.
         $e->getFile() . ' on line :' .$e->getLine();
