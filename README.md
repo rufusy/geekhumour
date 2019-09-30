@@ -1,2 +1,2 @@
 # geekhumour
-A microframework in PHP
+Trying to create a php web framework while building a super cool website
