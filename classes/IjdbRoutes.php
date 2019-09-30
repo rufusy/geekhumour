@@ -10,7 +10,6 @@
         public function callAction($route)
         {
             include_once __DIR__ . '/../includes/DatabaseConnection.php';
-            include __DIR__ . '/../classes/DatabaseTable.php';
 
             $jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
             $authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
