@@ -2,56 +2,15 @@
     ini_set("display_errors", "1");
     error_reporting(E_ALL);
 
-    
-    /**
-     * loadTemplate
-     * Makes sure variables existing outside of this scope wouldn't be
-     * overwritten
-     *
-     * @param  mixed $tenplateFileName
-     * @param  mixed $variables
-     *
-     * @return void
-     */
-    function loadTemplate($tenplateFileName, $variables = [])
-    {
-        extract ($variables);
-
-        ob_start();
-
-        include __DIR__ . '/../templates/'.$tenplateFileName;
-
-        return ob_get_clean();
-    }
-
-
     try
     {
-        include_once __DIR__ . '/../includes/DatabaseConnection.php';
-        include __DIR__ . '/../classes/DatabaseTable.php';
-        include __DIR__ . '/../controllers/JokeController.php';
+        include __DIR__ . '/../classes/EntryPoint.php';
 
-        $jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
-        $authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
+        $route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
 
-        $jokeController = new JokeController($jokesTable, $authorsTable);
-
-        $action = $_GET['action'] ?? 'home';
-
-        $page = $jokeController->$action();
- 
-        $title = $page['title'];
-
-        if(isset($page['variables']))
-        {
-            $output = loadTemplate($page['template'], $page['variables']);
-        }
-        else
-        {
-            $output = loadTemplate($page['template']);
-        }
+        $entryPoint = new EntryPoint($route);
+        $entryPoint->run();
     }
-
 
     catch(PDOException $e)
     {
@@ -60,6 +19,7 @@
         $output = 'Unable to connect to the database server '.
         $e->getMessage() . ' in '.
         $e->getFile() . ' on line :' .$e->getLine();
+
+        include __DIR__ . '/../templates/layout.html.php';
     }
 
-    include __DIR__ . '/../templates/layout.html.php';

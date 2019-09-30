@@ -27,9 +27,9 @@
         <nav>
             <div class="nav-wrapper">
                 <ul id="nav-mobile" class="left hide-on-med-and-down">
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="index.php?action=list">Jokes List</a></li>
-                    <li><a href="index.php?action=edit">Add a new joke</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/joke/list">Jokes List</a></li>
+                    <li><a href="/joke/edit">Add a new joke</a></li>
                 </ul>
             </div>
         </nav>

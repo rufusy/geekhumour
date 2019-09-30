@@ -29,6 +29,7 @@
         public function home()
         {
            $title = 'Internet joke database';
+
           
            return [
                'title' => $title,
@@ -89,7 +90,7 @@
 
                 $this->jokesTable->save($joke);
 
-                header('location: index.php?action=list');
+                header('location: /joke/list');
             }
             else
             {
@@ -121,6 +122,6 @@
         {
             $this->jokesTable->delete($_POST['id']);
 
-            header('location:index.php?action=list');
+            header('location: /joke/list');
         }
     }
