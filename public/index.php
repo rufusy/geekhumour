@@ -6,10 +6,9 @@
     {
         include __DIR__ . '/../includes/autoload.php';
 
-
         $route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
 
-        $entryPoint = new EntryPoint($route, new IjdbRoutes());
+        $entryPoint = new \Ninja\EntryPoint($route, new \Ninja\Ijdb\IjdbRoutes());
         $entryPoint->run();
     }
 
