@@ -3,9 +3,10 @@
     namespace Ninja\Ijdb;
 
     use \Ninja\DatabaseTable;
+    use \Ninja\Routes;
     use \Ninja\Ijdb\Controllers\Joke;
 
-    class IjdbRoutes
+    class IjdbRoutes implements Routes
     {   
          
         /**
