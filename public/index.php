@@ -2,13 +2,16 @@
     ini_set("display_errors", "1");
     error_reporting(E_ALL);
 
+    use \Ninja\EntryPoint;
+    use \Ninja\Ijdb\IjdbRoutes;
+
     try
     {
         include __DIR__ . '/../includes/autoload.php';
 
         $route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
 
-        $entryPoint = new \Ninja\EntryPoint($route, new \Ninja\Ijdb\IjdbRoutes());
+        $entryPoint = new EntryPoint($route, $_SERVER['REQUEST_METHOD'], new IjdbRoutes());
         $entryPoint->run();
     }
 

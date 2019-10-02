@@ -80,40 +80,44 @@
 
 
         /**
+         * saveEdit
+         *
+         * @return void
+         */
+        public function saveEdit()
+        {
+            $joke = $_POST['joke'];
+            $joke['authorid'] = 1;
+            $joke['jokedate'] = new \DateTime();
+
+            $this->jokesTable->save($joke);
+
+            header('location: /joke/list');
+        }
+
+        
+        /**
          * edit
          *
          * @return void
          */
         public function edit()
         {
-            if(isset($_POST['joke']))
+            if(isset($_GET['id']) && !empty($_GET['id']))
             {
-                $joke = $_POST['joke'];
-                $joke['authorid'] = 1;
-                $joke['jokedate'] = new \DateTime();
-
-                $this->jokesTable->save($joke);
-
-                header('location: /joke/list');
+                $joke = $this->jokesTable->findById($_GET['id']);
+                $title = 'Edit joke';
             }
             else
-            {
-                if(isset($_GET['id']) && !empty($_GET['id']))
-                {
-                    $joke = $this->jokesTable->findById($_GET['id']);
-                    $title = 'Edit joke';
-                }
-                else
-                    $title = 'Add joke';
+                $title = 'Add joke';
 
-                return [
-                    'title' => $title,
-                    'template' => 'editjoke.html.php',
-                    'variables' => [
-                        'joke' => $joke ?? null
-                    ]
-                ];
-            }
+            return [
+                'title' => $title,
+                'template' => 'editjoke.html.php',
+                'variables' => [
+                    'joke' => $joke ?? null
+                ]
+            ];
         }
 
 
