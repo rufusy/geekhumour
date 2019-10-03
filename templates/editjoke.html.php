@@ -1,5 +1,5 @@
 
-<div class="row">
+<div style='margin-top:50px;' class="row">
     <form class="col s12" action="" method="post">
         <div class="row">
             <input type="hidden" name="joke[id]" value="<?=$joke['id'] ?? '';?>">

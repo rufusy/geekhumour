@@ -10,13 +10,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-  <style>
-      header {
-        padding: 25px 50px 75px 100px;
-        color: blue;
-        background-color: lightblue;
-      }
-  </style>
+    <style>
+        header 
+        {
+            padding: 25px 50px 75px 100px;
+            color: blue;
+            background-color: lightblue;
+        }
+        .errors 
+        {
+            padding: 1em;
+            border: 1px solid red;
+            background-color: lightyellow;
+            color: red;
+            margin-bottom: 1em;
+            overflow: auto;
+        }
+        .errors ul 
+        {
+            margin-left: 1em;
+        }
+    </style>
 </head>
 
 <body>
