@@ -5,6 +5,8 @@
     use \Ninja\DatabaseTable;
     use \Ninja\Routes;
     use \Ninja\Ijdb\Controllers\Joke;
+    use \Ninja\Ijdb\Controllers\Register;
+
 
     class IjdbRoutes implements Routes
     {   
@@ -18,10 +20,22 @@
         {
             include_once __DIR__ . '/../../../includes/DatabaseConnection.php';
 
+            /**
+             * Database tables
+             */
             $jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
             $authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
-            $jokeController = new Joke($jokesTable, $authorsTable);
 
+            /**
+             * Controllers
+             */
+            $jokeController = new Joke($jokesTable, $authorsTable);
+            $authorController = new Register($authorsTable);
+
+
+            /**
+             * Web routes
+             */
             $routes =[
                 '' => [
                     'GET' => [
@@ -50,7 +64,25 @@
                         'controller' => $jokeController,
                         'action' => 'delete'
                     ]
+                ],
+
+                'author/register' => [
+                    'GET' => [
+                        'controller' => $authorController,
+                        'action' => 'registrationForm'
+                    ],
+                    'POST' => [
+                        'controller' => $authorController,
+                        'action' => 'registerUser' 
+                    ]
+                ],
+                'author/success' => [
+                    'GET' => [
+                        'controller' => $authorController,
+                        'action' => 'success'
+                    ]
                 ]
+
             ];
 
             return $routes;
