@@ -66,6 +66,29 @@
             return $result->fetch();
         }
 
+
+        /**
+         * find
+         * 
+         * @param  mixed $column
+         * @param  mixed $value
+         *
+         * @return void
+         * 
+         * Search the database table for records that have a value set for a specified column
+         */
+        public function find($column, $value)
+        {
+            $sql = 'SELECT * FROM '. $this->catalogName . ' WHERE '.$column. ' = :value';
+            $params = [
+                'value' => $value
+            ];
+
+            $result = $this->query($sql, $params);
+            
+            return $result->fetchAll();
+  
+        }
        
         /**
          * insert
@@ -205,4 +228,7 @@
                 $this->update($record);
             }
         }
+
+
+      
     }
