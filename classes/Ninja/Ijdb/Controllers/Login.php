@@ -53,7 +53,7 @@
             else
             {
                 $errors[] = 'Invalid Email/Password.';
-                
+
                 return [
                     'title' => 'Log in',
                     'template' => 'login.html.php',
@@ -89,6 +89,16 @@
             return [
                 'title' => 'You are not logged in!',
                 'template' => 'loginerror.html.php'
+            ];
+        }
+
+
+        public function logout()
+        {
+            session_destroy();
+            return [
+                'title' => 'You have been logged out!',
+                'template' => 'logout.html.php'
             ];
         }
     }
