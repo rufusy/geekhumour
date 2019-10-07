@@ -2,7 +2,6 @@
 
     namespace Ninja\Ijdb\Controllers;
     
-    use \Ninja\DatabaseTable;
     use \Ninja\Authentication;
 
     class Login
