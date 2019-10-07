@@ -4,33 +4,52 @@
 
     use \Ninja\DatabaseTable;
     use \Ninja\Routes;
+    use \Ninja\Authentication;
     use \Ninja\Ijdb\Controllers\Joke;
     use \Ninja\Ijdb\Controllers\Register;
+    use \Ninja\Ijdb\Controllers\Login;
+
 
 
     class IjdbRoutes implements Routes
     {   
-         
+        
+        private $authorsTable;
+        private $jokesTable;
+        private $authentication;
+
+
         /**
-         * callAction
+         * __construct
          *
-         * @return $page
+         * @return void
          */
-        public function getRoutes()
+        public function __construct()
         {
             include_once __DIR__ . '/../../../includes/DatabaseConnection.php';
 
             /**
              * Database tables
              */
-            $jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
-            $authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
+            $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
+            $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
+            $this->authentication = new Authentication($this->authorsTable, 'email', 'password');
+        }
+        
 
+        /**
+         * callAction
+         *
+         * @return $page
+         */
+        public function getRoutes(): array
+        {
             /**
              * Controllers
              */
-            $jokeController = new Joke($jokesTable, $authorsTable);
-            $authorController = new Register($authorsTable);
+            $jokeController = new Joke($this->jokesTable, $this->authorsTable);
+            $authorController = new Register($this->authorsTable);
+            $loginController = new Login($this->authentication);
 
 
             /**
@@ -43,6 +62,10 @@
                         'action' => 'home'
                     ]
                 ],
+
+                /**
+                 *  joke routes
+                 */
                 'joke/list' => [
                     'GET' => [
                         'controller' => $jokeController,
@@ -57,15 +80,20 @@
                     'GET' => [
                         'controller' => $jokeController,
                         'action' => 'edit'
-                    ]
+                    ],
+                    'login' => true
                 ],
                 'joke/delete' => [
                     'POST' => [
                         'controller' => $jokeController,
                         'action' => 'delete'
-                    ]
+                    ],
+                    'login' => true
                 ],
 
+                /**
+                 *  author routes
+                 */
                 'author/register' => [
                     'GET' => [
                         'controller' => $authorController,
@@ -81,10 +109,57 @@
                         'controller' => $authorController,
                         'action' => 'success'
                     ]
+                ],
+
+                /**
+                 *  login routes
+                 */
+                'login' => [
+                    'GET' => [
+                        'controller' => $loginController,
+                        'action' => 'loginForm'
+                    ],
+                    'POST' => [
+                        'controller' => $loginController,
+                        'action' => 'processLogin'
+                    ]
+                ],
+
+                'login/success' => [
+                    'GET' => [
+                        'controller' => $loginController,
+                        'action' => 'success'
+                    ],
+                    'login' => true
+                ],
+
+                'login/error' => [
+                    'GET' => [
+                        'controller' => $loginController,
+                        'action' => 'error'
+                    ]
+                ],
+
+                'logout' => [
+                    'GET' => [
+                        'controller' => $loginController,
+                        'action' => 'logout'
+                    ]
                 ]
 
             ];
 
             return $routes;
+        }
+
+        
+        /**
+         * getAuthentication
+         *
+         * @return void
+         */
+        public function getAuthentication(): Authentication
+        {
+            return $this->authentication;
         }
     }
