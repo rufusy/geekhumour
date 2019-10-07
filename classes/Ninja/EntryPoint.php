@@ -93,7 +93,13 @@
                     $output = $this->loadTemplate($page['template']);
                 }
 
-                include __DIR__ . '/../../templates/layout.html.php';
+                //include __DIR__ . '/../../templates/layout.html.php';
+                
+                echo $this->loadTemplate('layout.html.php', [
+                    'loggedIn' => $authentication->isLoggedIn(),
+                    'output' => $output,
+                    'title' => $title
+                    ]);
             }
         }
 
