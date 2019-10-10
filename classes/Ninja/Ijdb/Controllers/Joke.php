@@ -64,19 +64,23 @@
                     'joketext' => $joke['joketext'],
                     'jokedate' => $joke['jokedate'],
                     'name' => $author['name'],
-                    'email' => $author['email']
+                    'email' => $author['email'],
+                    'authorId' => $author['id']
                 ];
             }
 
             $title = 'Jokes list';
             $totalJokes = $this->jokesTable->total();
 
+            $user = $this->authentication->getUser();
+
             return [
                 'title' => $title,
                 'template' => 'jokes.html.php',
                 'variables' => [
                     'totalJokes' => $totalJokes,
-                    'jokes' => $jokes
+                    'jokes' => $jokes,
+                    'userId' => $user['id'] ?? null
                 ]
             ];
         }
@@ -89,10 +93,19 @@
          */
         public function saveEdit()
         {
-            $author = $this->authentication->getUser();
+            $user = $this->authentication->getUser();
+
+            if(isset($_GET['id']))
+            {
+                $joke = $this->jokesTable->findById($_GET['id']);
+                if($joke['authorid'] != $user['id'])
+                {
+                    return;
+                }
+            }
 
             $joke = $_POST['joke'];
-            $joke['authorid'] = $author['id'];
+            $joke['authorid'] = $user['id'];
             $joke['jokedate'] = new \DateTime();
 
             $this->jokesTable->save($joke);
@@ -108,9 +121,13 @@
          */
         public function edit()
         {
+
+            $user = $this->authentication->getUser();
+
             if(isset($_GET['id']) && !empty($_GET['id']))
             {
                 $joke = $this->jokesTable->findById($_GET['id']);
+
                 $title = 'Edit joke';
             }
             else
@@ -120,8 +137,8 @@
                 'title' => $title,
                 'template' => 'editjoke.html.php',
                 'variables' => [
-                    'joke' => $joke ?? null
-                ]
+                    'joke' => $joke ?? null,
+                    'userId' => $user['id'] ?? null                ]
             ];
         }
 
@@ -133,8 +150,20 @@
          */
         public function delete()
         {
+            $user = $this->authentication->getUser();
+
+            if(isset($_POST['id']))
+            {
+                $joke = $this->jokesTable->findById($_POST['id']);
+                if($joke['authorid'] != $user['id'])
+                {
+                    return;
+                }
+            }
+
             $this->jokesTable->delete($_POST['id']);
 
             header('location: /joke/list');
         }
+
     }
