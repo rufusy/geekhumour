@@ -74,4 +74,24 @@
                 return false;
             }
         }
+
+
+        /**
+         * getUser
+         *
+         * @return void
+         * 
+         * returns record of logged in user
+         */
+        public function getUser()
+        {
+            if($this->isLoggedIn())
+            {
+                return $this->users->find($this->userNameColumn, strtolower($_SESSION['username']))[0];
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
