@@ -7,13 +7,37 @@
         private $catalogName;
         private $pdo;
         private $primaryKey;
+        private $className;
+        private $constructorArgs;
 
-        public function __construct(\PDO $pdo, string $databaseName, string $tableName, string $primaryKey)
+      
+        /**
+         * __construct
+         *
+         * @param  mixed $pdo
+         * @param  mixed $databaseName
+         * @param  mixed $tableName
+         * @param  mixed $primaryKey
+         * @param  mixed $className
+         * @param  mixed $constructorArgs
+         *
+         * @return void
+         * 
+         * We provide the below args to create unique entity classes only for those database tables we want to add methods to!
+         * $className: Name of the class to instantiate
+         * $constructorArgs: Array of args to provide the constructor when the object is created
+         * 
+         */
+
+        public function __construct(\PDO $pdo, string $databaseName, string $tableName, string $primaryKey, string $className = '\stdClass', array $constructorArgs = [])
         {
             $this->pdo = $pdo;
             $this->catalogName = $databaseName.'.'.$tableName;
             $this->primaryKey = $primaryKey;
+            $this->className = $className;
+            $this->constructorArgs = $constructorArgs;
         }
+
 
         /**
          * query
@@ -50,7 +74,11 @@
          *
          * @param  mixed $id
          *
-         * @return void
+         * @return object
+         * 
+         * 
+         * object: instance of the entity class specified by the className 
+         * 
          */
         public function findById($id)
         {   
@@ -63,7 +91,7 @@
 
             $result = $this->query($sql, $params);
 
-            return $result->fetch();
+            return $result->fetchObject($this->className, $this->constructorArgs);
         }
 
 
@@ -73,9 +101,10 @@
          * @param  mixed $column
          * @param  mixed $value
          *
-         * @return void
+         * @return object
          * 
          * Search the database table for records that have a value set for a specified column
+         * object: instance of the entity class specified by the className 
          */
         public function find($column, $value)
         {
@@ -86,10 +115,11 @@
 
             $result = $this->query($sql, $params);
             
-            return $result->fetchAll();
+            return $result->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
   
         }
        
+
         /**
          * insert
          *
@@ -175,14 +205,16 @@
         /**
          * findAll
          *
-         * @return void
+         * @return object
+         * 
+         * object: instance of the entity class specified by the className 
          */
         public function findAll()
         {
     
             $sql = 'SELECT * FROM '.$this->catalogName;
             $result = $this->query($sql);
-            return $result->fetchAll();
+            return $result->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
         }
 
        
