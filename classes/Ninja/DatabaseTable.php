@@ -29,7 +29,8 @@
          * 
          */
 
-        public function __construct(\PDO $pdo, string $databaseName, string $tableName, string $primaryKey, string $className = '\stdClass', array $constructorArgs = [])
+        public function __construct(\PDO $pdo, string $databaseName, string $tableName, string $primaryKey, 
+                                    string $className = '\stdClass', array $constructorArgs = [])
         {
             $this->pdo = $pdo;
             $this->catalogName = $databaseName.'.'.$tableName;
@@ -115,8 +116,7 @@
 
             $result = $this->query($sql, $params);
             
-            return $result->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
-  
+            return $result->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);  
         }
        
 
