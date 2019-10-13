@@ -5,6 +5,7 @@
     use \Ninja\DatabaseTable;
     use \Ninja\Routes;
     use \Ninja\Authentication;
+    //use \Ninja\Ijdb\Entity\Author;
     use \Ninja\Ijdb\Controllers\Joke;
     use \Ninja\Ijdb\Controllers\Register;
     use \Ninja\Ijdb\Controllers\Login;
@@ -32,7 +33,7 @@
              * Database tables
              */
             $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
-            $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id');
+            $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id', '\Ninja\Ijdb\Entity\Author', [$this->jokesTable]);
             $this->authentication = new Authentication($this->authorsTable, 'email', 'password');
         }
         
@@ -65,21 +66,39 @@
 
                 /**
                  *  joke routes
+                 * 
                  */
                 'joke/list' => [
                     'GET' => [
                         'controller' => $jokeController,
-                        'action' => 'list'
+                        'action' => 'show'
                     ]
                 ],
-                'joke/edit' => [
+                'joke/add' => [
+                    'GET' => [
+                        'controller' => $jokeController,
+                        'action' => 'create'
+                    ],
+                    'login' => true
+                ],
+                'joke/store' => [
                     'POST' => [
                         'controller' => $jokeController,
-                        'action' => 'saveEdit'
+                        'action' => 'store'
                     ],
+                    'login' => true
+                ],
+                'joke/edit' => [
                     'GET' => [
                         'controller' => $jokeController,
                         'action' => 'edit'
+                    ],
+                    'login' => true
+                ],
+                'joke/update' => [
+                    'POST' => [
+                        'controller' => $jokeController,
+                        'action' => 'update'
                     ],
                     'login' => true
                 ],
