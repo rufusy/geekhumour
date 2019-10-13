@@ -5,6 +5,8 @@
     use \Ninja\DatabaseTable;
     use \Ninja\Authentication;
 
+    use \Ninja\Ijdb\Entity\Author;
+
     class Joke
     {
         private $authorsTable;
@@ -50,29 +52,29 @@
          *
          * @return void
          */
-        public function list()
+        public function show()
         {
             $result = $this->jokesTable->findAll();
             $jokes = [];
 
             foreach($result as $joke)
             {
-                $author = $this->authorsTable->findById($joke['authorid']);
+                $author = $this->authorsTable->findById($joke->authorid);
 
                 $jokes[] = [
-                    'id' => $joke['id'],
-                    'joketext' => $joke['joketext'],
-                    'jokedate' => $joke['jokedate'],
-                    'name' => $author['name'],
-                    'email' => $author['email'],
-                    'authorId' => $author['id']
+                    'id' => $joke->id,
+                    'joketext' => $joke->joketext,
+                    'jokedate' => $joke->jokedate,
+                    'name' => $author->name,
+                    'email' => $author->email,
+                    'authorId' => $author->id
                 ];
             }
 
             $title = 'Jokes list';
             $totalJokes = $this->jokesTable->total();
 
-            $user = $this->authentication->getUser();
+            $user = $this->authentication->getUser(); // get logged in user
 
             return [
                 'title' => $title,
@@ -80,40 +82,44 @@
                 'variables' => [
                     'totalJokes' => $totalJokes,
                     'jokes' => $jokes,
-                    'userId' => $user['id'] ?? null
+                    'userId' => $user->id ?? null
                 ]
             ];
         }
 
 
         /**
-         * saveEdit
+         * create
          *
          * @return void
          */
-        public function saveEdit()
+        public function create()
         {
-            $user = $this->authentication->getUser();
+            return [
+                'title' => 'Add joke',
+                'template' => 'addjoke.html.php'
+            ];
+        }
 
-            if(isset($_GET['id']))
-            {
-                $joke = $this->jokesTable->findById($_GET['id']);
-                if($joke['authorid'] != $user['id'])
-                {
-                    return;
-                }
-            }
 
+        /**
+         * store
+         *
+         * @return void
+         */
+        public function store()
+        {
+            $user = $this->authentication->getUser(); 
+            
             $joke = $_POST['joke'];
-            $joke['authorid'] = $user['id'];
             $joke['jokedate'] = new \DateTime();
 
-            $this->jokesTable->save($joke);
+            $user->addJoke($joke);
 
             header('location: /joke/list');
         }
-
         
+      
         /**
          * edit
          *
@@ -127,19 +133,45 @@
             if(isset($_GET['id']) && !empty($_GET['id']))
             {
                 $joke = $this->jokesTable->findById($_GET['id']);
-
                 $title = 'Edit joke';
-            }
-            else
-                $title = 'Add joke';
 
+                if($joke == null)
+                {
+                    header('location: /joke/list');
+                }
+            }
+            
             return [
                 'title' => $title,
                 'template' => 'editjoke.html.php',
                 'variables' => [
                     'joke' => $joke ?? null,
-                    'userId' => $user['id'] ?? null                ]
+                    'userId' => $user->id ?? null              
+                ]
             ];
+        }
+        
+
+        /**
+         * update
+         *
+         * @return void
+         */
+        public function update()
+        {
+            $user = $this->authentication->getUser(); 
+            $joke = $_POST['joke'];
+
+            if($joke['id'] != $user->id)
+            {
+                header('location: /joke/list');
+            }
+ 
+            $joke['jokedate'] = new \DateTime();
+
+            $user->addJoke($joke);
+
+            header('location: /joke/list');
         }
 
 
@@ -155,9 +187,9 @@
             if(isset($_POST['id']))
             {
                 $joke = $this->jokesTable->findById($_POST['id']);
-                if($joke['authorid'] != $user['id'])
+                if($joke->authorid != $user->id)
                 {
-                    return;
+                    header('location: /joke/list');
                 }
             }
 
