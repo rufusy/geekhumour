@@ -89,6 +89,7 @@
             $params = [
                 'id' => $id
             ];
+            
 
             $result = $this->query($sql, $params);
 

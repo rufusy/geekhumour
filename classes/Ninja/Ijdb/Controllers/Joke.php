@@ -54,30 +54,12 @@
          */
         public function show()
         {
-            $result = $this->jokesTable->findAll();
-            $jokes = [];
-
-            foreach($result as $joke)
-            {
-                $author = $this->authorsTable->findById($joke->authorid);
-
-                $jokes[] = [
-                    'id' => $joke->id,
-                    'joketext' => $joke->joketext,
-                    'jokedate' => $joke->jokedate,
-                    'name' => $author->name,
-                    'email' => $author->email,
-                    'authorId' => $author->id
-                ];
-            }
-
-            $title = 'Jokes list';
+            $jokes = $this->jokesTable->findAll();
             $totalJokes = $this->jokesTable->total();
-
-            $user = $this->authentication->getUser(); // get logged in user
+            $user = $this->authentication->getUser(); 
 
             return [
-                'title' => $title,
+                'title' => 'Jokes list',
                 'template' => 'jokes.html.php',
                 'variables' => [
                     'totalJokes' => $totalJokes,

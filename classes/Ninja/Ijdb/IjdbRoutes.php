@@ -32,8 +32,8 @@
             /**
              * Database tables
              */
-            $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id');
-            $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id', '\Ninja\Ijdb\Entity\Author', [$this->jokesTable]);
+            $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id', '\Ninja\Ijdb\Entity\Joke', [&$this->authorsTable]);
+            $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id', '\Ninja\Ijdb\Entity\Author', [&$this->jokesTable]);
             $this->authentication = new Authentication($this->authorsTable, 'email', 'password');
         }
         
