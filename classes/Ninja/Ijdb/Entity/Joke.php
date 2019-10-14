@@ -6,6 +6,7 @@
     class Joke
     {
         private $authorsTable;
+        private $author;
         public $id;
         public $authorid;
         public $jokedate;
@@ -18,7 +19,11 @@
 
         public function getAuthor()
         {
-            return $this->authorsTable->findById($this->authorid);
+            if(empty($this->author))
+            {
+                $this->author = $this->authorsTable->findById($this->authorid);
+            }
+            return $this->author;
         }
 
     }
