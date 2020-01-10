@@ -9,6 +9,7 @@
     use \Ninja\Ijdb\Controllers\Joke;
     use \Ninja\Ijdb\Controllers\Register;
     use \Ninja\Ijdb\Controllers\Login;
+    use \Ninja\Ijdb\Controllers\Category;
 
 
 
@@ -17,6 +18,7 @@
         
         private $authorsTable;
         private $jokesTable;
+        private $categoriesTable;
         private $authentication;
 
 
@@ -34,6 +36,7 @@
              */
             $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id', '\Ninja\Ijdb\Entity\Joke', [&$this->authorsTable]);
             $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id', '\Ninja\Ijdb\Entity\Author', [&$this->jokesTable]);
+            $this->categoriesTable = new DatabaseTable($pdo, $dbName, 'category', 'id');
             $this->authentication = new Authentication($this->authorsTable, 'email', 'password');
         }
         
@@ -51,6 +54,7 @@
             $jokeController = new Joke($this->jokesTable, $this->authorsTable, $this->authentication);
             $authorController = new Register($this->authorsTable);
             $loginController = new Login($this->authentication);
+            $categoryController = new Category($this->categoriesTable);
 
 
             /**
@@ -109,6 +113,42 @@
                     ],
                     'login' => true
                 ],
+
+                /**
+                 * category routes
+                 */
+                'category' => [
+                    'GET' => [
+                        'controller' => $categoryController,
+                        'action' => 'index'
+                    ],
+                    'POST' => [
+                        'controller' => $categoryController,
+                        'action' => 'store'
+                    ]
+                ],
+                'category/create' => [
+                    'GET' => [
+                        'controller' => $categoryController,
+                        'action' => 'create'
+                    ]
+                ],
+
+                'category/edit' => [
+                    'GET' => [
+                        'controller' => $categoryController,
+                        'action' => 'edit'
+                    ],
+                    'login' => true 
+                ],
+                'category/delete' => [
+                    'POST' => [
+                        'controller' => $categoryController,
+                        'action' => 'destroy'
+                    ],
+                    'login' => true 
+                ],
+
 
                 /**
                  *  author routes
