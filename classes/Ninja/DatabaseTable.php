@@ -126,12 +126,11 @@
          *
          * @param  mixed $fields
          *
-         * @return void
+         * @return last insert ID
          */
         private function insert($fields)
         {
         
-    
             $sql = 'INSERT INTO '.$this->catalogName.'(';
             foreach($fields as $key => $value)
             {
@@ -149,6 +148,8 @@
             $fields = $this->processDates($fields);
     
             $this->query($sql, $fields);
+
+            return $this->pdo->lastInsertId();
         }
 
 
@@ -202,6 +203,26 @@
             $this->query($sql, $params);
         }
 
+
+        /**
+         * deleteWhere
+         *
+         * @param  mixed $column
+         * @param  mixed $value
+         *
+         * @return void
+         */
+        public function deleteWhere($column, $value)
+        {
+            $sql = 'DELETE FROM '. $this->catalogName . ' WHERE '.$column. ' = :value';
+            
+            $params = [
+                'value' => $value
+            ];
+
+            $this->query($sql, $params);
+        }
+
         
         /**
          * findAll
@@ -242,26 +263,32 @@
         /**
          * save
          *
-         * @param  mixed $record
+         * @param  array $record
          *
-         * @return void
-         */
+         * @return className entity instance
+        */
         public function save($record)
         {
+            $entity = new $this->className(...$this->constructorArgs);
             try 
             {
                 if ($record[$this->primaryKey] == '')
                 {
                     $record[$this->primaryKey] = null;
                 }
-                $this->insert($record);
+                $insertId = $this->insert($record);
+                $entity->{$this->primaryKey} = $insertId;
             }
+
             catch (\PDOException $e)
             {
                 $this->update($record);
             }
+
+            foreach($record as $key => $value)
+            {  
+                $entity->$key = $value;
+            }
+            return $entity;
         }
-
-
-      
     }

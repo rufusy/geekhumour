@@ -8,6 +8,7 @@
     try
     {
         include __DIR__ . '/../includes/autoload.php';
+        include __DIR__ . '/../includes/tools.php';
 
         $route = ltrim(strtok($_SERVER['REQUEST_URI'], '?'), '/');
 

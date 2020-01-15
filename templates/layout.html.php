@@ -42,12 +42,9 @@
             <div class="nav-wrapper">
                 <ul id="nav-mobile" class="left hide-on-med-and-down">
                     <li><a href="/">Home</a></li>
-                    <li><a href="/joke/list">Jokes List</a></li>
-                    <li><a href="/joke/add">Add a new joke</a></li>
+                    <li><a href="/joke/add">New joke</a></li>
                     <li><a href="/category">Categories</a></li>
-                    <li><a href="/category/create">Add a new category</a></li>
-
-
+                    <li><a href="/category/create">New category</a></li>
                     <?php if ($loggedIn): ?>
                         <li><a href="/logout">Log out</a></li>
                     <?php else: ?>

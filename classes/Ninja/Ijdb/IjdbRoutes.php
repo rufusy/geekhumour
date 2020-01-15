@@ -5,7 +5,6 @@
     use \Ninja\DatabaseTable;
     use \Ninja\Routes;
     use \Ninja\Authentication;
-    //use \Ninja\Ijdb\Entity\Author;
     use \Ninja\Ijdb\Controllers\Joke;
     use \Ninja\Ijdb\Controllers\Register;
     use \Ninja\Ijdb\Controllers\Login;
@@ -19,6 +18,7 @@
         private $authorsTable;
         private $jokesTable;
         private $categoriesTable;
+        private $jokeCategoriesTable;
         private $authentication;
 
 
@@ -34,9 +34,12 @@
             /**
              * Database tables
              */
-            $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id', '\Ninja\Ijdb\Entity\Joke', [&$this->authorsTable]);
+            $this->jokesTable = new DatabaseTable($pdo, $dbName, 'joke', 'id', '\Ninja\Ijdb\Entity\Joke', 
+                                                    [&$this->authorsTable, &$this->jokeCategoriesTable]);
             $this->authorsTable = new DatabaseTable($pdo, $dbName, 'author', 'id', '\Ninja\Ijdb\Entity\Author', [&$this->jokesTable]);
-            $this->categoriesTable = new DatabaseTable($pdo, $dbName, 'category', 'id');
+            $this->categoriesTable = new DatabaseTable($pdo, $dbName, 'category', 'id', '\Ninja\Ijdb\Entity\Category', 
+                                                        [&$this->jokesTable, &$this->jokeCategoriesTable]);
+            $this->jokeCategoriesTable = new DatabaseTable($pdo, $dbName, 'joke_category', 'categoryId');
             $this->authentication = new Authentication($this->authorsTable, 'email', 'password');
         }
         
@@ -51,7 +54,7 @@
             /**
              * Controllers
              */
-            $jokeController = new Joke($this->jokesTable, $this->authorsTable, $this->authentication);
+            $jokeController = new Joke($this->jokesTable, $this->authorsTable, $this->categoriesTable, $this->authentication);
             $authorController = new Register($this->authorsTable);
             $loginController = new Login($this->authentication);
             $categoryController = new Category($this->categoriesTable);
@@ -61,21 +64,20 @@
              * Web routes
              */
             $routes =[
-                '' => [
-                    'GET' => [
-                        'controller' => $jokeController,
-                        'action' => 'home'
-                    ]
-                ],
-
-                /**
+                 /**
                  *  joke routes
                  * 
                  */
+                '' => [
+                    'GET' => [
+                        'controller' => $jokeController,
+                        'action' => 'index'
+                    ]
+                ],
                 'joke/list' => [
                     'GET' => [
                         'controller' => $jokeController,
-                        'action' => 'show'
+                        'action' => 'list'
                     ]
                 ],
                 'joke/add' => [
@@ -125,15 +127,16 @@
                     'POST' => [
                         'controller' => $categoryController,
                         'action' => 'store'
-                    ]
+                    ],
+                    'login' => true
                 ],
                 'category/create' => [
                     'GET' => [
                         'controller' => $categoryController,
                         'action' => 'create'
-                    ]
+                    ],
+                    'login' => true
                 ],
-
                 'category/edit' => [
                     'GET' => [
                         'controller' => $categoryController,

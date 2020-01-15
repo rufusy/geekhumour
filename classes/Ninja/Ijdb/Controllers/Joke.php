@@ -11,6 +11,7 @@
     {
         private $authorsTable;
         private $jokesTable;
+        private $categoriesTable;
         private $authentication;
 
 
@@ -22,11 +23,12 @@
          *
          * @return void
          */
-        public function __construct(DatabaseTable $jokesTable, DatabaseTable $authorsTable, Authentication $authentication)
+        public function __construct(DatabaseTable $jokesTable, DatabaseTable $authorsTable, DatabaseTable $categoriesTable, Authentication $authentication)
         {
             $this->jokesTable = $jokesTable;
             $this->authorsTable = $authorsTable;
             $this->authentication = $authentication;
+            $this->categoriesTable = $categoriesTable;
         }
 
 
@@ -45,17 +47,17 @@
                'template' => 'home.html.php'
             ];
         }
-
-
+   
         /**
-         * list
+         * index
          *
          * @return void
          */
-        public function show()
+        public function index()
         {
             $jokes = $this->jokesTable->findAll();
             $totalJokes = $this->jokesTable->total();
+            $categories = $this->categoriesTable->findAll();
             $user = $this->authentication->getUser(); 
 
             return [
@@ -64,7 +66,36 @@
                 'variables' => [
                     'totalJokes' => $totalJokes,
                     'jokes' => $jokes,
-                    'userId' => $user->id ?? null
+                    'userId' => $user->id ?? null,
+                    'categories' => $categories
+                ]
+            ];
+        }
+
+        
+        /**
+         * list
+         *
+         * @return void
+         */
+        public function list()
+        {
+            if(isset($_GET['category']) && !empty($_GET['category']))
+            {
+                $category = $this->categoriesTable->findById($_GET['category']); 
+                $jokes = $category->getJokes();   
+            }
+            else
+            {
+                $jokes = $this->jokesTable->findAll();
+            }
+
+            return [
+                'title' => $category->name,
+                'template' => 'jokesList.html.php',
+                'variables' => [
+                    'jokes' => $jokes,
+                    'category' => $category
                 ]
             ];
         }
@@ -98,7 +129,7 @@
 
             $user->addJoke($joke);
 
-            header('location: /joke/list');
+            header('location: /');
         }
         
       
@@ -111,6 +142,7 @@
         {
 
             $user = $this->authentication->getUser();
+            $categories = $this->categoriesTable->findAll();
 
             if(isset($_GET['id']) && !empty($_GET['id']))
             {
@@ -119,7 +151,7 @@
 
                 if($joke == null)
                 {
-                    header('location: /joke/list');
+                    header('location: /');
                 }
             }
             
@@ -128,7 +160,8 @@
                 'template' => 'editjoke.html.php',
                 'variables' => [
                     'joke' => $joke ?? null,
-                    'userId' => $user->id ?? null              
+                    'userId' => $user->id ?? null,    
+                    'categories' => $categories          
                 ]
             ];
         }
@@ -143,17 +176,23 @@
         {
             $user = $this->authentication->getUser(); 
             $joke = $_POST['joke'];
-
+            
             if($joke['id'] != $user->id)
             {
-                header('location: /joke/list');
+                header('location: /');
             }
  
             $joke['jokedate'] = new \DateTime();
 
-            $user->addJoke($joke);
+            $jokeEntity = $user->addJoke($joke);
+            $jokeEntity->clearCategories();
 
-            header('location: /joke/list');
+            foreach($_POST['category'] as $categoryId)
+            {
+                $jokeEntity->addCategory($categoryId);
+            }
+
+            header('location: /');
         }
 
 
@@ -171,13 +210,13 @@
                 $joke = $this->jokesTable->findById($_POST['id']);
                 if($joke->authorid != $user->id)
                 {
-                    header('location: /joke/list');
+                    header('location: /');
                 }
             }
 
             $this->jokesTable->delete($_POST['id']);
 
-            header('location: /joke/list');
+            header('location: /');
         }
 
     }

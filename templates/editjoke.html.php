@@ -11,6 +11,26 @@
                     </textarea>
                 </div>
             </div>
+
+            <p>Select categories for this joke:</p>
+            <?php foreach ($categories as $category): ?>
+                <p>
+                    <label>
+                        <?php if($joke->hasCategory($category->id)):?>
+                            <input type="checkbox"  
+                                    name="category[]" checked
+                                    value="<?=$category->id;?>" />
+                        <?php else:?>
+                            <input type="checkbox"  
+                                    name="category[]"
+                                    value="<?=$category->id;?>" />
+                        <?php endif;?>
+
+                        <span><?=$category->name;?></span>
+                    </label>
+                </p>
+            <?php endforeach; ?>
+
             <div class="row">
                 <input class="btn waves-effect waves-light" type="submit" value="submit" name="submit">
             </div>
