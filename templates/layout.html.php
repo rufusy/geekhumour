@@ -45,6 +45,7 @@
                     <li><a href="/joke/add">New joke</a></li>
                     <li><a href="/category">Categories</a></li>
                     <li><a href="/category/create">New category</a></li>
+                    <li><a href="/author/list">Users</a></li>
                     <?php if ($loggedIn): ?>
                         <li><a href="/logout">Log out</a></li>
                     <?php else: ?>

@@ -1,5 +1,5 @@
 <div style='margin-top:50px;' class="row">
-    <?php if($userId == $joke->authorid):?> 
+    <?php if($user->id == $joke->authorid || $user->hasPermission(\Ninja\Ijdb\Entity\Author::EDIT_JOKES)):?> 
         <form class="col s12" action="/joke/update" method="post">
             <div class="row">
                 <input type="hidden" name="joke[id]" value="<?=$joke->id ?? '';?>">

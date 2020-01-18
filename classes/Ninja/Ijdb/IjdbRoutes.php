@@ -124,32 +124,40 @@
                         'controller' => $categoryController,
                         'action' => 'index'
                     ],
-                    'POST' => [
-                        'controller' => $categoryController,
-                        'action' => 'store'
-                    ],
-                    'login' => true
+                    'login' => true,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::LIST_CATEGORIES
                 ],
                 'category/create' => [
                     'GET' => [
                         'controller' => $categoryController,
                         'action' => 'create'
                     ],
-                    'login' => true
+                    'login' => true,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::EDIT_CATEGORIES
                 ],
                 'category/edit' => [
                     'GET' => [
                         'controller' => $categoryController,
                         'action' => 'edit'
                     ],
-                    'login' => true 
+                    'login' => true ,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::EDIT_CATEGORIES
+                ],
+                'category/store' => [
+                    'POST' => [
+                        'controller' => $categoryController,
+                        'action' => 'store'
+                    ],
+                    'login' => true,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::EDIT_CATEGORIES
                 ],
                 'category/delete' => [
                     'POST' => [
                         'controller' => $categoryController,
                         'action' => 'destroy'
                     ],
-                    'login' => true 
+                    'login' => true ,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::REMOVE_CATEGORIES
                 ],
 
 
@@ -171,6 +179,26 @@
                         'controller' => $authorController,
                         'action' => 'success'
                     ]
+                ],
+                'author/list' => [
+                    'GET' => [
+                        'controller' => $authorController,
+                        'action' => 'list'
+                    ],
+                    'login' => true,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::EDIT_USER_ACCESS
+                ],
+                'author/permissions' => [
+                    'GET' => [
+                        'controller' => $authorController,
+                        'action' => 'permissions'
+                    ],
+                    'POST' => [
+                        'controller' => $authorController,
+                        'action' => 'savePermissions'
+                    ],
+                    'login' => true,
+                    'permissions' => \Ninja\Ijdb\Entity\Author::EDIT_USER_ACCESS
                 ],
 
                 /**
@@ -223,5 +251,18 @@
         public function getAuthentication(): Authentication
         {
             return $this->authentication;
+        }
+
+        /**
+         * checkPermission
+         *
+         * @param  mixed $permission
+         *
+         * @return bool
+         */
+        public function checkPermission($permission): bool
+        {
+           $user = $this->authentication->getUser();
+           return $user && $user->hasPermission($permission) ? true : false;
         }
     }

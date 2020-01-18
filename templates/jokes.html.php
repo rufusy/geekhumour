@@ -19,12 +19,19 @@
                     $date = new DateTime($joke->jokedate);
                     echo $date->format('jS F Y');
                 ?>
-                <?php if($userId == $joke->authorid):?>
-                    <a href="/joke/edit?id=<?=$joke->id;?>">Edit</a>
-                    <form action="/joke/delete" method="post">
-                        <input type="hidden" name="id" value="<?=$joke->id;?>">
-                        <input type="submit" value="Delete">
-                    </form>
+                <?php if($user):?>
+                
+                    <?php if($user->id == $joke->authorid || $user->hasPermission(\Ninja\Ijdb\Entity\Author::EDIT_JOKES)):?>
+                        <a href="/joke/edit?id=<?=$joke->id;?>">Edit</a>
+                    <?php endif;?>
+
+                    <?php if($user->id == $joke->authorid || $user->hasPermission(\Ninja\Ijdb\Entity\Author::DELETE_JOKES)):?>
+                        <form action="/joke/delete" method="post">
+                            <input type="hidden" name="id" value="<?=$joke->id;?>">
+                            <input type="submit" value="Delete">
+                        </form>
+                    <?php endif;?>
+
                 <?php endif;?>
             </p>
         </blockquote> 

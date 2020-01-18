@@ -1,4 +1,4 @@
-<form action="/category" method="POST">
+<form action="/category/store" method="POST">
     <input type="hidden"
         name="category[id]"
         value="<?=$category->id ?? '';?>">

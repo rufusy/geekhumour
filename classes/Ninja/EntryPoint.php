@@ -75,6 +75,10 @@
             {
                 header('location: /login/error');
             }
+            else if (isset($routes[$this->route]['permissions']) && !$this->routes->checkPermission($routes[$this->route]['permissions']))
+            {
+                header('location: /login/error');  
+            }
             else
             {
                 $controller = $routes[$this->route][$this->method]['controller'];
@@ -92,8 +96,6 @@
                 {
                     $output = $this->loadTemplate($page['template']);
                 }
-
-                //include __DIR__ . '/../../templates/layout.html.php';
                 
                 echo $this->loadTemplate('layout.html.php', [
                     'loggedIn' => $authentication->isLoggedIn(),

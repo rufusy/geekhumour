@@ -66,7 +66,7 @@
                 'variables' => [
                     'totalJokes' => $totalJokes,
                     'jokes' => $jokes,
-                    'userId' => $user->id ?? null,
+                    'user' => $user,
                     'categories' => $categories
                 ]
             ];
@@ -160,7 +160,7 @@
                 'template' => 'editjoke.html.php',
                 'variables' => [
                     'joke' => $joke ?? null,
-                    'userId' => $user->id ?? null,    
+                    'user' => $user,                    
                     'categories' => $categories          
                 ]
             ];
@@ -208,7 +208,7 @@
             if(isset($_POST['id']))
             {
                 $joke = $this->jokesTable->findById($_POST['id']);
-                if($joke->authorid != $user->id)
+                if($joke->authorid != $user->id && !$user->hasPermission(\Ninja\Ijdb\Entity\Author::DELETE_JOKES))
                 {
                     header('location: /');
                 }

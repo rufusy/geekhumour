@@ -2,6 +2,7 @@
     namespace Ninja\Ijdb\Controllers;
     
     use \Ninja\DatabaseTable;
+    use \Ninja\Ijdb\Entity\Author;
 
     class Register 
     {
@@ -74,6 +75,7 @@
             if ($valid == true)
             {
                 $author['password'] = password_hash($author['password'], PASSWORD_DEFAULT);
+                $author['permissions'] = (int)0;
                 $this->authorsTable->save($author);
                 header('Location: /author/success');
             }
@@ -89,6 +91,44 @@
                     ]
                 ];
             }
-            
+
+        }
+
+        public function list()
+        {
+            $authors = $this->authorsTable->findAll();
+            return [
+                'title' => 'Author List',
+                'template' => 'authorsList.html.php',
+                'variables' => [
+                    'authors' => $authors
+                ]
+            ];
+        }
+
+        public function permissions()
+        {
+            $author = $this->authorsTable->findById($_GET['id']);
+            $reflected = new \ReflectionClass('\Ninja\Ijdb\Entity\Author');
+            $constants = $reflected->getConstants();
+
+            return [
+                'title' => 'User Permissions',
+                'template' => 'permissions.html.php',
+                'variables' => [
+                    'author' => $author,
+                    'permissions' => $constants
+                ]
+            ];
+        }
+
+        public function savePermissions()
+        {
+            $author = [
+                'id' => $_POST['id'],
+                'permissions' => array_sum($_POST['permissions'] ?? [])
+            ];
+            $this->authorsTable->save($author);
+            header('location: /author/list');
         }
     }
